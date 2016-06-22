@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">SimpleTodo</string>
+    <string name="add_item">Add Task</string>
+    <string name="edit_item">Edit Task</string>
+    <string name="add_item_message">Add a new Task</string>
+    <string name="edit_item_message">Edit the task</string>
+    <string name="ok_button">OK</string>
+    <string name="cancel_button">CANCEL</string>
+    <string name="task_deleted">Task is deleted</string>
+    <string name="undo">UNDO</string>
+    <string name="all_todos">All TODOs</string>
+</resources>

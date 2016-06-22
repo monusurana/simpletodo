@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="8dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="8dp">
+
+    <TextView
+        android:id="@+id/tvTask"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:textSize="20sp"
+        tools:text="Dummy Task" />
+
+    <FrameLayout
+        android:id="@+id/ivDeleteFrameLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tvTask"
+        android:layout_alignEnd="@+id/tvTask"
+        android:layout_alignRight="@+id/tvTask"
+        android:layout_alignTop="@+id/tvTask">
+
+        <ImageView
+            android:id="@+id/ivDelete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_action_remove" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/ivDeleteFrameLayout"
+        android:layout_alignTop="@+id/ivDeleteFrameLayout"
+        android:layout_toLeftOf="@+id/ivDeleteFrameLayout"
+        android:layout_toStartOf="@+id/ivDeleteFrameLayout">
+
+        <ImageView
+            android:id="@+id/ivEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_image_edit" />
+    </FrameLayout>
+
+</RelativeLayout>
