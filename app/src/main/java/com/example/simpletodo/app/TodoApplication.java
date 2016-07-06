@@ -1,13 +1,14 @@
 package com.example.simpletodo.app;
 
-import android.app.Application;
 import android.os.StrictMode;
 
 import com.example.simpletodo.BuildConfig;
+import com.orm.SugarApp;
 import com.squareup.leakcanary.LeakCanary;
+
 import timber.log.Timber;
 
-public class TodoApplication extends Application{
+public class TodoApplication extends SugarApp {
     private static TodoApplication singleton;
 
     public static TodoApplication getInstance() {
@@ -32,5 +33,10 @@ public class TodoApplication extends Application{
 
             LeakCanary.install(this);
         }
+    }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
     }
 }

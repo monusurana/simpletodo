@@ -88,14 +88,6 @@ public class TodoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
     }
 
     /**
-     * Function to get the list of Tasks
-     * @return Returns the list of TodoItems
-     */
-    public List<TodoItem> getTasks() {
-        return mItems;
-    }
-
-    /**
      * Function to update the list of TodoItems
      * @param tasks List of TodoItems as an input
      */
@@ -113,6 +105,8 @@ public class TodoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         final TodoItem contact = mItems.get(position);
         contact.setTask(task);
 
+        contact.save();
+
         notifyDataSetChanged();
     }
 
@@ -123,6 +117,8 @@ public class TodoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
     public void addTodoItem(String task) {
         TodoItem item = new TodoItem(task);
         mItems.add(mItems.size(), item);
+
+        item.save();
 
         notifyItemInserted(mItems.size());
         notifyItemChanged(0);
@@ -137,6 +133,8 @@ public class TodoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         TodoItem item = new TodoItem(task);
         mItems.add(position, item);
 
+        item.save();
+
         notifyItemInserted(position + 1);
         notifyItemChanged(0);
     }
@@ -148,6 +146,8 @@ public class TodoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
     public void removeTodoItem(TodoItem item) {
         int position = mItems.indexOf(item);
         mItems.remove(position);
+
+        item.delete();
 
         notifyItemRemoved(position + 1);
         notifyItemChanged(0);

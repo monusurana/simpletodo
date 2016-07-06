@@ -3,7 +3,6 @@ package com.example.simpletodo.ui;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -20,17 +19,9 @@ import android.widget.EditText;
 import com.example.simpletodo.R;
 import com.example.simpletodo.data.TodoItem;
 
-import org.apache.commons.io.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class TodoActivity extends AppCompatActivity {
-
-    public static final String SAVED_TASKS = "Tasks";
-    private static final String TODO_TXT = "todo.txt";
 
     private RecyclerView mRecyclerView;
     private TodoRecyclerViewAdapter mTodoRecyclerViewAdapter;
@@ -49,11 +40,8 @@ public class TodoActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mTodoRecyclerViewAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        if (savedInstanceState != null && savedInstanceState.containsKey(SAVED_TASKS)) {
-            List<TodoItem> tasks = savedInstanceState.getParcelableArrayList(SAVED_TASKS);
-            mTodoRecyclerViewAdapter.updateAdapter(tasks);
-        } else {
-            List<TodoItem> tasks = readItems();
+        if (TodoItem.count(TodoItem.class) > 0 ) {
+            List<TodoItem> tasks = TodoItem.listAll(TodoItem.class);
             if (tasks != null) {
                 mTodoRecyclerViewAdapter.updateAdapter(tasks);
             }
@@ -70,14 +58,13 @@ public class TodoActivity extends AppCompatActivity {
             @Override
             public void onItemDelete(TodoItem task, final int position, View parent) {
                 final String todoItem = task.getTask();
-                writeItems();
+
                 Snackbar snackbar = Snackbar
                         .make(coordinatorLayout, getString(R.string.task_deleted), Snackbar.LENGTH_LONG)
                         .setAction(R.string.undo, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 mTodoRecyclerViewAdapter.addTodoItemAtPosition(todoItem, position);
-                                writeItems();
                             }
                         });
 
@@ -97,11 +84,6 @@ public class TodoActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
-        List<TodoItem> items = mTodoRecyclerViewAdapter.getTasks();
-        if (items != null) {
-            outState.putParcelableArrayList(SAVED_TASKS, (ArrayList<? extends Parcelable>) items);
-        }
     }
 
     @Override
@@ -153,8 +135,8 @@ public class TodoActivity extends AppCompatActivity {
                     mTodoRecyclerViewAdapter.updateItem(input.getText().toString(), position);
                 } else {
                     mTodoRecyclerViewAdapter.addTodoItem(input.getText().toString());
+
                 }
-                writeItems();
             }
         });
 
@@ -196,49 +178,5 @@ public class TodoActivity extends AppCompatActivity {
         }
 
         mDialog.show();
-    }
-
-    /**
-     * Function to read TodoItems from the file
-     */
-    private List<TodoItem> readItems() {
-        File filesDir = getFilesDir();
-
-        File todoFile = new File(filesDir, TODO_TXT);
-        try {
-            List<String> items = new ArrayList<String>(FileUtils.readLines(todoFile));
-            List<TodoItem> todoItems = new ArrayList<TodoItem>();
-
-            for(String s: items) {
-                todoItems.add(new TodoItem(s));
-            }
-
-            return todoItems;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    /**
-     * Function to write TodoItems into a file
-     */
-    private void writeItems() {
-        File filesDir = getFilesDir();
-
-        File todoFile = new File(filesDir, TODO_TXT);
-        try {
-            List<TodoItem> tasks = mTodoRecyclerViewAdapter.getTasks();
-            List<String> items = new ArrayList<String>();
-
-            for(TodoItem s: tasks) {
-                items.add(s.getTask());
-            }
-
-            FileUtils.writeLines(todoFile, items);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }
