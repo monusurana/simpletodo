@@ -9,4 +9,11 @@
     <string name="task_deleted">Task is deleted</string>
     <string name="undo">UNDO</string>
     <string name="all_todos">All TODOs</string>
+    <string name="choose_priority">Choose Priority</string>
+
+    <string-array name="priority">
+        <item>Low</item>
+        <item>Medium</item>
+        <item>High</item>
+    </string-array>
 </resources>

@@ -1,6 +1,7 @@
 package com.example.simpletodo.ui;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,6 +71,9 @@ public class TodoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
             TodoItem contact = mItems.get(position - 1);
             TextView editTaskView = ((ViewHolderItem) holder).editTaskView;
             editTaskView.setText(contact.getTask());
+
+            View priority = ((ViewHolderItem) holder).priorityView;
+            priority.setBackgroundColor(getPriorityColor(contact.getPriority()));
         }
     }
 
@@ -101,9 +105,10 @@ public class TodoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
      * @param task Updated task string
      * @param position Position of the task to be updated
      */
-    public void updateItem(String task, int position) {
+    public void updateItem(String task, String priority, int position) {
         final TodoItem contact = mItems.get(position);
         contact.setTask(task);
+        contact.setPriority(getPriority(priority));
 
         contact.save();
 
@@ -114,8 +119,8 @@ public class TodoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
      * Add Todo item to the list
      * @param task Task to be added to the list
      */
-    public void addTodoItem(String task) {
-        TodoItem item = new TodoItem(task);
+    public void addTodoItem(String task, String priority) {
+        TodoItem item = new TodoItem(task, getPriority(priority));
         mItems.add(mItems.size(), item);
 
         item.save();
@@ -129,8 +134,8 @@ public class TodoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
      * @param task Task to be added to the list
      * @param position Position where the task should be added
      */
-    public void addTodoItemAtPosition(String task, int position) {
-        TodoItem item = new TodoItem(task);
+    public void addTodoItemAtPosition(String task, int priority, int position) {
+        TodoItem item = new TodoItem(task, priority);
         mItems.add(position, item);
 
         item.save();
@@ -157,6 +162,7 @@ public class TodoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
      * View Holder for Recycler View Item
      */
     public class ViewHolderItem extends RecyclerView.ViewHolder {
+        private View priorityView;
         public TextView editTaskView;
         private ImageView deleteTask;
         private ImageView editTask;
@@ -164,6 +170,7 @@ public class TodoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         public ViewHolderItem(View itemView) {
             super(itemView);
 
+            priorityView = itemView.findViewById(R.id.priority);
             editTaskView = (TextView) itemView.findViewById(R.id.tvTask);
             deleteTask = (ImageView) itemView.findViewById(R.id.ivDelete);
             editTask = (ImageView) itemView.findViewById(R.id.ivEdit);
@@ -202,5 +209,42 @@ public class TodoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
             mTitle = (TextView) itemView.findViewById(R.id.header);
             mCount = (TextView) itemView.findViewById(R.id.count);
         }
+    }
+
+    /**
+     * Helper method to return priority based on String input
+     * @param priority
+     * @return integer value of priority
+     * TODO: Use getResources() to use strings directly from xml instead of hard-coded values
+     */
+    private int getPriority(String priority) {
+        switch (priority) {
+            case "Low": return 1;
+            case "Medium": return 2;
+            case "High": return 3;
+        }
+
+        return 1;
+    }
+
+    /**
+     * Helper function to return color based on the priority
+     * @param priority
+     * @return returns the integer value of the color
+     *
+     * TODO: Use getResources().getColor() to use color directly from xml
+     */
+    private int getPriorityColor(int priority) {
+        String GREEN = "#009688";
+        String RED = "#F44336";
+        String YELLOW = "#FDD835";
+
+        switch (priority) {
+            case 1: return Color.parseColor(GREEN);
+            case 2: return Color.parseColor(YELLOW);
+            case 3: return Color.parseColor(RED);
+        }
+
+        return Color.parseColor(GREEN);
     }
 }

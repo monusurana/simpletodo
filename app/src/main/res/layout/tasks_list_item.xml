@@ -8,18 +8,33 @@
     android:paddingRight="16dp"
     android:paddingTop="8dp">
 
+    <View
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:background="@color/green_500"
+        android:id="@+id/priority"
+        android:layout_marginRight="8dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+    </View>
+
     <TextView
         android:id="@+id/tvTask"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:textSize="20sp"
-        tools:text="Dummy Task" />
+        tools:text="Dummy Task"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/priority"
+        android:layout_toRightOf="@+id/priority" />
 
     <FrameLayout
         android:id="@+id/ivDeleteFrameLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
         android:layout_alignBottom="@+id/tvTask"
         android:layout_alignEnd="@+id/tvTask"
         android:layout_alignRight="@+id/tvTask"
@@ -36,6 +51,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/ivDeleteFrameLayout"
+        android:layout_centerVertical="true"
         android:layout_alignTop="@+id/ivDeleteFrameLayout"
         android:layout_toLeftOf="@+id/ivDeleteFrameLayout"
         android:layout_toStartOf="@+id/ivDeleteFrameLayout">

@@ -11,10 +11,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.example.simpletodo.R;
 import com.example.simpletodo.data.TodoItem;
@@ -52,19 +53,20 @@ public class TodoActivity extends AppCompatActivity {
         mClickListener = new TodoRecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemEdit(List<TodoItem> tasks, int position, View parent) {
-                EditItem(parent, tasks.get(position).getTask(), position);
+                EditItem(parent, tasks.get(position).getTask(), tasks.get(position).getPriority(), position);
             }
 
             @Override
             public void onItemDelete(TodoItem task, final int position, View parent) {
                 final String todoItem = task.getTask();
+                final int priority = task.getPriority();
 
                 Snackbar snackbar = Snackbar
                         .make(coordinatorLayout, getString(R.string.task_deleted), Snackbar.LENGTH_LONG)
                         .setAction(R.string.undo, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                mTodoRecyclerViewAdapter.addTodoItemAtPosition(todoItem, position);
+                                mTodoRecyclerViewAdapter.addTodoItemAtPosition(todoItem, priority, position);
                             }
                         });
 
@@ -99,7 +101,7 @@ public class TodoActivity extends AppCompatActivity {
      * @param v View
      */
     private void AddItem(View v) {
-        EditItem(v, null, 0);
+        EditItem(v, null, 1, 0);
     }
 
     /**
@@ -108,7 +110,7 @@ public class TodoActivity extends AppCompatActivity {
      * @param text Text of the existing task
      * @param position Position of the existing task in the list
      */
-    private void EditItem(View v, final String text, final int position) {
+    private void EditItem(View v, final String text, int priority, final int position) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
         builder.setIcon(android.R.drawable.ic_dialog_info);
 
@@ -120,22 +122,24 @@ public class TodoActivity extends AppCompatActivity {
             builder.setMessage(getString(R.string.edit_item_message));
         }
 
-        final EditText input = new EditText(v.getContext());
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        View view = (View) LayoutInflater.from(v.getContext()).inflate(R.layout.dialog_todo, null);
+        final EditText input = (EditText) view.findViewById(R.id.editText);
+        final Spinner spinner = (Spinner) view.findViewById(R.id.spinner);
+
         if (text != null) {
             input.setText(text);
             input.setSelection(text.length());
+            spinner.setSelection(priority - 1);
         }
 
-        builder.setView(input, 50, 0, 50, 0);
+        builder.setView(view);
         builder.setPositiveButton(getString(R.string.ok_button), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (text != null) {
-                    mTodoRecyclerViewAdapter.updateItem(input.getText().toString(), position);
+                    mTodoRecyclerViewAdapter.updateItem(input.getText().toString(), spinner.getSelectedItem().toString(), position);
                 } else {
-                    mTodoRecyclerViewAdapter.addTodoItem(input.getText().toString());
-
+                    mTodoRecyclerViewAdapter.addTodoItem(input.getText().toString(), spinner.getSelectedItem().toString());
                 }
             }
         });
