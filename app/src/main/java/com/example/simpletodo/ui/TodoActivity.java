@@ -15,20 +15,28 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import com.example.simpletodo.R;
 import com.example.simpletodo.data.TodoItem;
+import com.example.simpletodo.utils.DividerItemDecoration;
 
 import java.util.List;
 
 public class TodoActivity extends AppCompatActivity {
+
+    private static int DIVIDER_PADDING_DP = 16;
 
     private RecyclerView mRecyclerView;
     private TodoRecyclerViewAdapter mTodoRecyclerViewAdapter;
     private FloatingActionButton mFloatingActionButton;
     private TodoRecyclerViewAdapter.OnItemClickListener mClickListener;
     private AlertDialog mDialog;
+    private FrameLayout mEditDeleteItem;
+    private int mSelectedPosition = -1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +49,11 @@ public class TodoActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mTodoRecyclerViewAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        if (TodoItem.count(TodoItem.class) > 0 ) {
+        RecyclerView.ItemDecoration itemDecoration =
+                new DividerItemDecoration(this, R.drawable.divider, DIVIDER_PADDING_DP);
+        mRecyclerView.addItemDecoration(itemDecoration);
+
+        if (TodoItem.count(TodoItem.class) > 0) {
             List<TodoItem> tasks = TodoItem.listAll(TodoItem.class);
             if (tasks != null) {
                 mTodoRecyclerViewAdapter.updateAdapter(tasks);
@@ -50,27 +62,85 @@ public class TodoActivity extends AppCompatActivity {
 
         final CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
 
+        mEditDeleteItem = (FrameLayout) findViewById(R.id.flEditDelete);
+        final LinearLayout deleteTask = (LinearLayout) findViewById(R.id.ivDelete);
+        final LinearLayout editTask = (LinearLayout) findViewById(R.id.ivEdit);
+        final LinearLayout cancelTask = (LinearLayout) findViewById(R.id.ivCancel);
+
         mClickListener = new TodoRecyclerViewAdapter.OnItemClickListener() {
             @Override
-            public void onItemEdit(List<TodoItem> tasks, int position, View parent) {
-                EditItem(parent, tasks.get(position).getTask(), tasks.get(position).getPriority(), position);
-            }
+            public void onItemClick(final TodoItem item, final int position, final View parent) {
 
-            @Override
-            public void onItemDelete(TodoItem task, final int position, View parent) {
-                final String todoItem = task.getTask();
-                final int priority = task.getPriority();
+                if (mSelectedPosition != position) {
+                    mFloatingActionButton.setVisibility(View.GONE);
+                    mEditDeleteItem.setVisibility(View.VISIBLE);
 
-                Snackbar snackbar = Snackbar
-                        .make(coordinatorLayout, getString(R.string.task_deleted), Snackbar.LENGTH_LONG)
-                        .setAction(R.string.undo, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                mTodoRecyclerViewAdapter.addTodoItemAtPosition(todoItem, priority, position);
-                            }
-                        });
+                    mSelectedPosition = position;
 
-                snackbar.show();
+                    deleteTask.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            final TodoItem contact = item;
+                            mTodoRecyclerViewAdapter.removeTodoItem(contact);
+                            final String todoItem = contact.getTask();
+                            final int priority = contact.getPriority();
+
+                            mFloatingActionButton.setVisibility(View.VISIBLE);
+                            mEditDeleteItem.setVisibility(View.GONE);
+
+                            Snackbar snackbar = Snackbar
+                                    .make(coordinatorLayout, getString(R.string.task_deleted), Snackbar.LENGTH_LONG)
+                                    .setAction(R.string.undo, new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            mTodoRecyclerViewAdapter.addTodoItemAtPosition(todoItem, priority, position);
+                                        }
+                                    });
+
+                            snackbar.show();
+
+                            parent.setSelected(false);
+                            mTodoRecyclerViewAdapter.deleteSelectedItem(position);
+
+                            mSelectedPosition = -1;
+                        }
+
+
+                    });
+
+                    editTask.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            EditItem(v, item.getTask(), item.getPriority(), position);
+                            mFloatingActionButton.setVisibility(View.VISIBLE);
+                            mEditDeleteItem.setVisibility(View.GONE);
+
+                            parent.setSelected(false);
+                            mTodoRecyclerViewAdapter.deleteSelectedItem(position);
+
+                            mSelectedPosition = -1;
+                        }
+                    });
+
+                    cancelTask.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mFloatingActionButton.setVisibility(View.VISIBLE);
+                            mEditDeleteItem.setVisibility(View.GONE);
+
+                            parent.setSelected(false);
+                            mTodoRecyclerViewAdapter.deleteSelectedItem(position);
+
+                            mSelectedPosition = -1;
+                        }
+                    });
+                } else {
+                    mFloatingActionButton.setVisibility(View.VISIBLE);
+                    mEditDeleteItem.setVisibility(View.GONE);
+
+                    mSelectedPosition = -1;
+                }
             }
         };
         mTodoRecyclerViewAdapter.setOnItemClickListener(mClickListener);
@@ -98,6 +168,7 @@ public class TodoActivity extends AppCompatActivity {
 
     /**
      * Helper function to add item
+     *
      * @param v View
      */
     private void AddItem(View v) {
@@ -106,8 +177,9 @@ public class TodoActivity extends AppCompatActivity {
 
     /**
      * Helper function to Edit the Task
-     * @param v View
-     * @param text Text of the existing task
+     *
+     * @param v        View
+     * @param text     Text of the existing task
      * @param position Position of the existing task in the list
      */
     private void EditItem(View v, final String text, int priority, final int position) {

@@ -8,8 +8,11 @@
     <string name="cancel_button">CANCEL</string>
     <string name="task_deleted">Task is deleted</string>
     <string name="undo">UNDO</string>
-    <string name="all_todos">All TODOs</string>
+    <string name="all_todos">Todo Items</string>
     <string name="choose_priority">Choose Priority</string>
+    <string name="edit_menu">Edit</string>
+    <string name="delete_menu">Delete</string>
+    <string name="cancel_menu">Cancel</string>
 
     <string-array name="priority">
         <item>Low</item>

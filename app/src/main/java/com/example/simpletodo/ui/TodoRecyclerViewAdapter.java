@@ -2,7 +2,10 @@ package com.example.simpletodo.ui;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,23 +25,26 @@ public class TodoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
     private List<TodoItem> mItems;
     private OnItemClickListener mListener;
 
+    private SparseBooleanArray selectedItems;
+
     /**
      * Constructor
      */
     public TodoRecyclerViewAdapter() {
         mItems = new ArrayList<>();
+        selectedItems = new SparseBooleanArray();
     }
 
     /**
      * Interface to get Edit and Delete events in the activity
      */
     public interface OnItemClickListener {
-        void onItemEdit(List<TodoItem> items, int position, View parent);
-        void onItemDelete(TodoItem item, int position, View parent);
+        void onItemClick(TodoItem item, int position, View parent);
     }
 
     /**
      * Function to set the listener for Edit and Delete events
+     *
      * @param listener Listener for the events
      */
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -55,6 +61,8 @@ public class TodoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
             return new ViewHolderHeader(headerView);
         } else if (viewType == TYPE_ITEM) {
             View itemView = inflater.inflate(R.layout.tasks_list_item, parent, false);
+
+
             return new ViewHolderItem(itemView);
         }
 
@@ -72,8 +80,14 @@ public class TodoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
             TextView editTaskView = ((ViewHolderItem) holder).editTaskView;
             editTaskView.setText(contact.getTask());
 
-            View priority = ((ViewHolderItem) holder).priorityView;
-            priority.setBackgroundColor(getPriorityColor(contact.getPriority()));
+            ImageView priority = ((ViewHolderItem) holder).priorityView;
+            priority.setBackground(ContextCompat.getDrawable(priority.getContext(), R.drawable.priority));
+            ((GradientDrawable) priority.getBackground()).setColor(getPriorityColor(contact.getPriority()));
+
+            TextView priorityText = ((ViewHolderItem) holder).priorityTextView;
+            priorityText.setText(getPriorityString(contact.getPriority()));
+
+            holder.itemView.setSelected(selectedItems.get(position - 1, false));
         }
     }
 
@@ -93,6 +107,7 @@ public class TodoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     /**
      * Function to update the list of TodoItems
+     *
      * @param tasks List of TodoItems as an input
      */
     public void updateAdapter(List<TodoItem> tasks) {
@@ -102,7 +117,8 @@ public class TodoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     /**
      * Update a TodoItem at a specific position
-     * @param task Updated task string
+     *
+     * @param task     Updated task string
      * @param position Position of the task to be updated
      */
     public void updateItem(String task, String priority, int position) {
@@ -117,6 +133,7 @@ public class TodoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     /**
      * Add Todo item to the list
+     *
      * @param task Task to be added to the list
      */
     public void addTodoItem(String task, String priority) {
@@ -131,7 +148,8 @@ public class TodoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     /**
      * Add Todo item at a specific position
-     * @param task Task to be added to the list
+     *
+     * @param task     Task to be added to the list
      * @param position Position where the task should be added
      */
     public void addTodoItemAtPosition(String task, int priority, int position) {
@@ -146,6 +164,7 @@ public class TodoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     /**
      * Remove a TodoItem from the list
+     *
      * @param item Todoitem to be removed
      */
     public void removeTodoItem(TodoItem item) {
@@ -162,38 +181,47 @@ public class TodoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
      * View Holder for Recycler View Item
      */
     public class ViewHolderItem extends RecyclerView.ViewHolder {
-        private View priorityView;
-        public TextView editTaskView;
-        private ImageView deleteTask;
-        private ImageView editTask;
+        private ImageView priorityView;
+        private TextView editTaskView;
+        private TextView priorityTextView;
 
-        public ViewHolderItem(View itemView) {
+        public ViewHolderItem(final View itemView) {
             super(itemView);
 
-            priorityView = itemView.findViewById(R.id.priority);
+            priorityView = (ImageView) itemView.findViewById(R.id.priority);
             editTaskView = (TextView) itemView.findViewById(R.id.tvTask);
-            deleteTask = (ImageView) itemView.findViewById(R.id.ivDelete);
-            editTask = (ImageView) itemView.findViewById(R.id.ivEdit);
+            priorityTextView = (TextView) itemView.findViewById(R.id.tvPriority);
 
-            deleteTask.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    final TodoItem contact = mItems.get(getLayoutPosition() - 1);
-                    removeTodoItem(contact);
-
-                    if (mListener != null)
-                        mListener.onItemDelete(contact, getLayoutPosition() - 1, v);
-                }
-            });
-
-            editTask.setOnClickListener(new View.OnClickListener() {
+            itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (mListener != null)
-                        mListener.onItemEdit(mItems, getLayoutPosition() - 1, v);
+                        mListener.onItemClick(mItems.get(getLayoutPosition() - 1), getLayoutPosition() - 1, v);
+
+                    if (!selectedItems.get(getLayoutPosition() - 1, false)) {
+                        selectedItems.clear();
+                        selectedItems.put(getLayoutPosition() - 1, true);
+                        v.setSelected(true);
+                        notifyDataSetChanged();
+                    } else {
+                        selectedItems.delete(getLayoutPosition() - 1);
+                        v.setSelected(false);
+                        notifyDataSetChanged();
+                    }
                 }
             });
         }
+    }
+
+
+    /**
+     * Delete selected item
+     *
+     * @param position
+     */
+    public void deleteSelectedItem(int position) {
+        selectedItems.delete(position);
+        notifyItemChanged(position + 1);
     }
 
     /**
@@ -213,25 +241,50 @@ public class TodoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     /**
      * Helper method to return priority based on String input
+     *
      * @param priority
      * @return integer value of priority
      * TODO: Use getResources() to use strings directly from xml instead of hard-coded values
      */
     private int getPriority(String priority) {
         switch (priority) {
-            case "Low": return 1;
-            case "Medium": return 2;
-            case "High": return 3;
+            case "Low":
+                return 1;
+            case "Medium":
+                return 2;
+            case "High":
+                return 3;
         }
 
         return 1;
     }
 
     /**
+     * Helper method to return priority based on String input
+     *
+     * @param priority
+     * @return integer value of priority
+     * TODO: Use getResources() to use strings directly from xml instead of hard-coded values
+     */
+    private String getPriorityString(int priority) {
+        switch (priority) {
+            case 1:
+                return "Low";
+            case 2:
+                return "Medium";
+            case 3:
+                return "High";
+        }
+
+        return "Low";
+    }
+
+    /**
      * Helper function to return color based on the priority
+     *
      * @param priority
      * @return returns the integer value of the color
-     *
+     * <p/>
      * TODO: Use getResources().getColor() to use color directly from xml
      */
     private int getPriorityColor(int priority) {
@@ -240,9 +293,12 @@ public class TodoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         String YELLOW = "#FDD835";
 
         switch (priority) {
-            case 1: return Color.parseColor(GREEN);
-            case 2: return Color.parseColor(YELLOW);
-            case 3: return Color.parseColor(RED);
+            case 1:
+                return Color.parseColor(GREEN);
+            case 2:
+                return Color.parseColor(YELLOW);
+            case 3:
+                return Color.parseColor(RED);
         }
 
         return Color.parseColor(GREEN);

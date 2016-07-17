@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:orientation="vertical">
+    android:paddingRight="@dimen/activity_horizontal_margin">
 
     <EditText
         android:id="@+id/editText"
@@ -13,22 +13,22 @@
         android:layout_gravity="center_horizontal" />
 
     <TextView
+        android:id="@+id/tvPriority"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/choose_priority"
-        android:paddingTop="8dp"
-        android:paddingLeft="8dp"
-        android:textSize="16sp"
         android:layout_gravity="center_horizontal"
+        android:paddingLeft="8dp"
+        android:paddingTop="8dp"
+        android:text="@string/choose_priority"
         android:textColor="@android:color/black"
-        android:id="@+id/tvPriority" />
+        android:textSize="16sp" />
 
     <Spinner
         android:id="@+id/spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:entries="@array/priority"
         android:layout_gravity="center_horizontal"
+        android:entries="@array/priority"
         android:paddingTop="8dp"
         android:spinnerMode="dialog" />
 

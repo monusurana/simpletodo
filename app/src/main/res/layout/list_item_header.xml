@@ -10,9 +10,8 @@
         android:id="@+id/header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#2196F3"
+        android:textColor="@color/colorAccent"
         android:textSize="24sp"
-        android:textStyle="bold"
         tools:text="All TODOs" />
 
     <TextView
@@ -23,8 +22,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_gravity="right"
-        android:textColor="#F44336"
+        android:textColor="@color/SecondaryTextColor"
         android:textSize="16sp"
         tools:text="4" />
-
 </RelativeLayout>
