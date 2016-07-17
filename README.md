@@ -21,19 +21,20 @@ The following **optional** features are implemented:
 * [ ] Add support for completion due dates for todo items (and display within listview item)
 * [X] Use a [DialogFragment](http://guides.codepath.com/android/Using-DialogFragment) instead of new Activity for editing items
 * [X] Add support for selecting the priority of each todo item (and display in listview item)
-* [ ] Tweak the style improving the UI / UX, play with colors, images or backgrounds
+* [X] Tweak the style improving the UI / UX, play with colors, images or backgrounds
 
 The following **additional** features are implemented:
 
 * [X] Used Material Design 
-* [X] Used Recycler View to display the todo items 
+* [X] Used Recycler View to display the todo items (with ItemDecoration)
 * [X] Used Sugar ORM to store the todo items
+* [X] Implemented Bottom bar Menu using FrameLayout for Edit, Delete and Cancel operations 
 
 ## Video Walkthrough 
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/El9z39k.gif' width='300'/>
+<img src='http://i.imgur.com/LsqUTAV.gif' width='300'/>
 
 ## Notes
 
