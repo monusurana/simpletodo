@@ -14,10 +14,12 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.example.simpletodo.R;
 import com.example.simpletodo.data.TodoItem;
@@ -184,17 +186,10 @@ public class TodoActivity extends AppCompatActivity {
      */
     private void EditItem(View v, final String text, int priority, final int position) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-        builder.setIcon(android.R.drawable.ic_dialog_info);
 
-        if (text == null) {
-            builder.setTitle(getString(R.string.add_item));
-            builder.setMessage(getString(R.string.add_item_message));
-        } else {
-            builder.setTitle(getString(R.string.edit_item));
-            builder.setMessage(getString(R.string.edit_item_message));
-        }
-
-        View view = (View) LayoutInflater.from(v.getContext()).inflate(R.layout.dialog_todo, null);
+        View view = LayoutInflater.from(v.getContext()).inflate(R.layout.dialog_todo, null);
+        final TextView title = (TextView) view.findViewById(R.id.dialog_title);
+        final TextView message = (TextView) view.findViewById(R.id.dialog_text);
         final EditText input = (EditText) view.findViewById(R.id.editText);
         final Spinner spinner = (Spinner) view.findViewById(R.id.spinner);
 
@@ -202,6 +197,11 @@ public class TodoActivity extends AppCompatActivity {
             input.setText(text);
             input.setSelection(text.length());
             spinner.setSelection(priority - 1);
+            title.setText(getString(R.string.edit_item));
+            message.setText(getString(R.string.edit_item_message));
+        } else {
+            title.setText(getString(R.string.add_item));
+            message.setText(getString(R.string.add_item_message));
         }
 
         builder.setView(view);
@@ -233,10 +233,15 @@ public class TodoActivity extends AppCompatActivity {
             }
 
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() == 0)
-                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                else
-                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                Button positiveButton = mDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+
+                if (s.length() == 0) {
+                    positiveButton.setTextColor(getResources().getColor(R.color.SecondaryTextColor));
+                    positiveButton.setEnabled(false);
+                } else {
+                    positiveButton.setTextColor(getResources().getColor(R.color.colorAccent));
+                    positiveButton.setEnabled(true);
+                }
             }
         });
 
@@ -245,10 +250,18 @@ public class TodoActivity extends AppCompatActivity {
 
                 @Override
                 public void onShow(DialogInterface dialog) {
-                    if (text != null)
-                        ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                    else
-                        ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                    Button negativeButton = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_NEGATIVE);
+                    Button positiveButton = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE);
+
+                    negativeButton.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+
+                    if (text != null) {
+                        positiveButton.setTextColor(getResources().getColor(R.color.colorAccent));
+                        positiveButton.setEnabled(true);
+                    } else {
+                        positiveButton.setTextColor(getResources().getColor(R.color.SecondaryTextColor));
+                        positiveButton.setEnabled(false);
+                    }
                 }
             });
         }

@@ -1,27 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin">
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/dialog_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:paddingBottom="16dp"
+        android:paddingLeft="16dp"
+        android:paddingTop="16dp"
+        tools:text="Title"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:id="@+id/dialog_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:paddingLeft="16dp"
+        android:paddingTop="16dp"
+        tools:text="Add a new task"
+        android:textColor="@color/colorAccent"
+        android:textSize="12sp" />
 
     <EditText
         android:id="@+id/editText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp" />
 
     <TextView
         android:id="@+id/tvPriority"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:paddingLeft="8dp"
-        android:paddingTop="8dp"
+        android:paddingLeft="16dp"
+        android:paddingTop="16dp"
         android:text="@string/choose_priority"
-        android:textColor="@android:color/black"
-        android:textSize="16sp" />
+        android:textColor="@color/colorAccent"
+        android:textSize="12sp" />
 
     <Spinner
         android:id="@+id/spinner"
@@ -29,7 +53,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:entries="@array/priority"
-        android:paddingTop="8dp"
-        android:spinnerMode="dialog" />
+        android:paddingLeft="16dp"
+        android:paddingTop="16dp"
+         />
 
 </LinearLayout>

@@ -34,7 +34,7 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/LsqUTAV.gif' width='300'/>
+<img src='http://i.imgur.com/ZjFqZWG.gif' width='300'/>
 
 ## Notes
 
